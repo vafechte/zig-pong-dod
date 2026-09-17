@@ -18,7 +18,6 @@ const World = struct {
     widths: [MAX_ENTITES]f32,
     heights: [MAX_ENTITES]f32,
     colors: [MAX_ENTITES][4]u8,
-    alive: [MAX_ENTITES]bool,
     scores: [2]u32,
     screenSize: struct { f32, f32 }
 };
@@ -90,7 +89,6 @@ fn initWorld() World {
         .widths = widths, 
         .heights = heights, 
         .colors = colors, 
-        .alive = @splat(true),
         .scores = scores,
         .screenSize = .{ screenWidth, screenHeihgt }
     };
@@ -220,7 +218,6 @@ fn movementSystem(
 fn aiSystem(world: *World) void {
     const aiId = @intFromEnum(EntityId.right_paddle);
     
-
     const aiCenterY = world.positions_y[aiId] + world.heights[aiId] / 2.0;
     const ballId = @intFromEnum(EntityId.ball);
     const ballCenterY = world.positions_y[ballId] + world.heights[ballId] / 2.0;
@@ -229,7 +226,6 @@ fn aiSystem(world: *World) void {
     const diff = aiCenterY - ballCenterY;
 
     const speed = 300 + @abs(world.velocities_y[ballId] / 2.0);
-
 
     if (@abs(diff) <= deadZone)
     {
@@ -326,9 +322,6 @@ fn drawEntities(world: *const World) !void {
     var i: usize = 0;
 
     while (i < MAX_ENTITES) : (i += 1) {
-        if (!world.alive[i])
-            continue;
-
         const color_rgba = world.colors[i];
         const color = rl.Color {
             .r = color_rgba[0],
